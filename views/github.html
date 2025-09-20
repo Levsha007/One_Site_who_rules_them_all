@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/github_profile.ico" type="image/x-icon">
+  <title>GitHub Профиль</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Brush+Script+MT&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Только стили для GitHub -->
+  <link rel="stylesheet" href="/css/github-style.css" />
+</head>
+<body>
+
+  <!-- Верхняя панель -->
+  <div class="top-panel">
+    <button id="home-btn" class="home-btn">&larr; Главная</button>
+    <span class="current-gallery-title">GitHub Профиль</span>
+    <div class="search-profile">
+      <input type="text" id="search-user-input" placeholder="Поиск профиля...">
+      <button onclick="searchUser()">🔍</button>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Переключить тему">☀️</button>
+  </div>
+
+  <!-- Кнопка "Назад" -->
+  <div id="back-btn-container" style="display: none; text-align: center;">
+    <button class="back-btn" onclick="goBackToMyProfile()">← Назад к моему профилю</button>
+  </div>
+
+  <!-- Основной контент -->
+  <div class="page-container">
+    <div class="page-content">
+
+      <div id="profile-section"></div>
+
+      <div class="section">
+        <h3 class="section-title">Мои репозитории</h3>
+        <div class="grid" id="repos-list"></div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Избранные репозитории</h3>
+        <div class="grid" id="starred-list"></div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Следую за</h3>
+        <div class="grid" id="following-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Модальное окно для просмотра файла -->
+  <div class="file-modal" id="file-modal">
+    <div class="file-modal-content">
+      <div class="file-modal-header">
+        <strong id="file-modal-filename">Loading...</strong>
+        <button class="file-modal-close" onclick="closeFileModal()">&times;</button>
+      </div>
+      <div id="file-modal-content"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer class="site-footer">
+    &copy; 2025 GitHub Профиль. Все права защищены.
+  </footer>
+
+  <!-- Только скрипт для GitHub -->
+  <script src="/js/github-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/assets/bookmarks.png" type="image/png">
+  <title>Закладки</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Brush+Script+MT&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <!-- Верхняя панель -->
+  <div class="top-panel">
+    <button id="home-btn" class="home-btn">&larr; Главная</button>
+    <span id="current-gallery-title" class="current-gallery-title">Закладки</span>
+    <button id="add-bookmark-btn" class="favorites-btn">➕ Добавить закладку</button>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Переключить тему">☀️</button>
+  </div>
+
+  <!-- Контейнер с flex для прижатия футера -->
+  <div class="page-container">
+    <!-- Содержимое страницы -->
+    <div class="page-content">
+      <!-- Поле поиска -->
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Поиск...">
+      </div>
+
+      <!-- Сортировка -->
+      <div class="sort-controls">
+        <label for="sort-select">Сортировка:</label>
+        <select id="sort-select">
+          <option value="name-asc">По названию (А-Я)</option>
+          <option value="name-desc">По названию (Я-А)</option>
+          <option value="category-asc">По категории (А-Я)</option>
+          <option value="category-desc">По категории (Я-А)</option>
+        </select>
+      </div>
+
+      <!-- Режимы отображения -->
+      <div class="view-mode-controls">
+        <label>Вид:</label>
+        <div class="view-mode-btns">
+          <button class="view-mode-btn active" data-mode="grid-mode" title="Сетка">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+            </svg>
+          </button>
+          <button class="view-mode-btn" data-mode="list-mode" title="Список">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <circle cx="3.5" cy="6" r="1.5"></circle>
+              <circle cx="3.5" cy="12" r="1.5"></circle>
+              <circle cx="3.5" cy="18" r="1.5"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Карточки закладок -->
+      <div class="bookmarks-grid" id="bookmarks-grid"></div>
+    </div>
+  </div>
+
+  <!-- Модальное окно для добавления закладки -->
+  <div class="modal" id="add-bookmark-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button id="close-add-modal" class="home-btn">&larr; Главная</button>
+      <form id="add-bookmark-form">
+        <label for="bookmark-title">Название:</label>
+        <input type="text" id="bookmark-title" name="title" required>
+        <label for="bookmark-url">URL:</label>
+        <input type="url" id="bookmark-url" name="url" required>
+        <label for="bookmark-category">Категория:</label>
+        <select id="bookmark-category" name="category">
+          <!-- Категории будут загружены динамически -->
+        </select>
+        <button type="submit">Добавить</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Модальное окно для просмотра метаданных -->
+  <div class="modal" id="view-bookmark-modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button id="close-view-modal" class="close-btn">&times;</button>
+      <div id="bookmark-details">
+        <h2 id="bookmark-title-modal"></h2>
+        <a id="bookmark-url-modal" target="_blank"></a>
+        <p id="bookmark-category-modal"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    &copy; 2025 Моя Галерея. Все права защищены.
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+:root {
+  --bg: #1a1a1a;
+  --card-bg: #2d2d2d;
+  --text: #f0e6d2;
+  --accent: #c0392b;
+  --shadow: rgba(0,0,0,0.3);
+}
+
+body[data-theme="light"] {
+  --bg: #f7f7f7;
+  --card-bg: #fff;
+  --text: #333;
+  --accent: #a01f1f;
+  --shadow: rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: 'Brush Script MT', cursive;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.4s, color 0.4s;
+  position: relative;
+  min-height: 100vh;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* === Верхняя панель === */
+.top-panel {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+}
+
+.home-btn {
+  background: transparent;
+  color: var(--text);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+/* === Поле поиска профиля === */
+.search-profile {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 280px;
+  margin-left: 16px;
+}
+
+.search-profile input {
+  width: 100%;
+  padding: 8px 12px;
+  padding-right: 40px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-profile input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+.search-profile input:focus {
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 0 2px rgba(192,57,43,0.3);
+}
+
+.search-profile button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.search-profile button:hover {
+  color: white;
+}
+
+/* === Ссылки — светлее в тёмном режиме === */
+a {
+  color: #88ccff;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #aaddff;
+  text-decoration: underline;
+}
+
+body[data-theme="light"] a {
+  color: #0055aa;
+}
+
+body[data-theme="light"] a:hover {
+  color: #003366;
+}
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 2px solid #fff;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* === Профиль === */
+.profile-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px var(--shadow);
+  margin-top: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.profile-header {
+  padding: 16px;
+  background: var(--accent);
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.profile-body {
+  padding: 16px;
+  text-align: center;
+}
+
+.profile-body img {
+  width: 100px;
+  border-radius: 50%;
+  margin: 10px auto;
+  display: block;
+}
+
+.profile-body h2 {
+  margin: 8px 0;
+}
+
+.profile-footer {
+  padding: 12px 16px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.stat-value {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* === Секции с заголовками === */
+.section {
+  margin: 30px 0 20px 0;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  color: var(--accent);
+  font-style: italic;
+  font-size: 22px;
+  border-bottom: 1px dashed rgba(255,255,255,0.2);
+  padding-bottom: 6px;
+}
+
+/* === Карточки репозиториев и пользователей === */
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px var(--shadow);
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card-header {
+  padding: 16px;
+  background: var(--accent);
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.card-body {
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.card-footer {
+  padding: 12px 16px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+}
+
+.file-tree ul {
+  list-style: none;
+  padding-left: 16px;
+  margin: 8px 0;
+}
+
+.file-tree li {
+  margin: 4px 0;
+  cursor: pointer;
+  color: #88ccff;
+}
+
+.file-tree li:hover {
+  text-decoration: underline;
+}
+
+.following-card {
+  cursor: pointer;
+}
+
+.following-card:hover {
+  transform: translateY(-4px);
+}
+
+.markdown-content,
+pre {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.file-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 1001;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.file-modal-content {
+  max-width: 90%;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  box-shadow: 0 10px 30px var(--shadow);
+  color: var(--text);
+  line-height: 1.5;
+  border: 1px solid rgba(255,255,255,0.1);
+  overflow-x: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.file-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.file-modal-close {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.file-modal-close:hover {
+  color: white;
+}
+
+.back-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.back-btn:hover {
+  background: #a01f1f;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.6;
+  margin-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}

@@ -1,0 +1,1000 @@
+/* public/css/style.css */
+:root {
+  --bg: #1a1a1a;
+  --card-bg: #2d2d2d;
+  --text: #f0e6d2;
+  --accent: #c0392b;
+  --shadow: rgba(0,0,0,0.3);
+  --gap: 8px;
+  --item-size: 32.7%;
+  --scale-factor: 1;
+  --min-item-size: 240px;
+}
+
+body[data-theme="light"] {
+  --bg: #f7f7f7;
+  --card-bg: #fff;
+  --text: #333;
+  --accent: #a01f1f;
+  --shadow: rgba(0,0,0,0.1);
+}
+
+/* === Базовое тело === */
+body {
+  font-family: 'Brush Script MT', cursive;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.4s, color 0.4s;
+  padding: 0 20px;
+  min-height: 100vh;
+}
+
+/* === Для страниц с прижатым футером (галерея, закладки) применяем flex-контейнер === */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
+  padding: 20px 0;
+}
+
+/* === Верхняя панель === */
+.top-panel {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  transition: background 0.4s, color 0.4s;
+}
+
+.home-btn {
+  background: transparent;
+  color: var(--text);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: background 0.2s;
+  font-weight: bold;
+}
+
+.home-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.current-gallery-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  font-size: 24px;
+  color: var(--accent);
+  margin: 0 16px;
+  white-space: nowrap;
+  text-align: center;
+  font-style: italic;
+}
+
+.favorites-btn {
+  background: transparent;
+  color: var(--accent);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.favorites-btn:hover {
+  background: rgba(192,57,43,0.1);
+  transform: scale(1.05);
+}
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 2px solid #fff;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* === Ползунок размера плиток === */
+.scale-control {
+  margin: 15px 0;
+  padding: 10px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed rgba(255,255,255,0.2);
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.scale-control label {
+  min-width: 120px;
+  color: var(--text);
+  font-weight: bold;
+}
+
+.slider-container {
+  flex: 1;
+  position: relative;
+  height: 6px;
+  background: #444;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.slider-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #555;
+  border-radius: 3px;
+}
+
+.slider-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.2s ease;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(192,57,43,0.5);
+  z-index: 10;
+}
+
+.slider-thumb:hover {
+  background: #a01f1f;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.scale-control span {
+  min-width: 60px;
+  text-align: right;
+  color: var(--text);
+  font-weight: bold;
+}
+
+/* === Поддержка details === */
+details {
+  margin: 15px 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px var(--shadow);
+  background: var(--card-bg);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+details[open] summary {
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+details > summary {
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: background 0.2s;
+  border-radius: 16px;
+}
+
+details > summary:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+details > summary::marker,
+details > summary::before {
+  content: '';
+}
+
+.detail-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+/* Формы внутри details */
+details form {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+details input, details select, details button {
+  padding: 10px;
+  margin: 0;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Brush Script MT', cursive;
+}
+
+details button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+details button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+/* === Пагинация (в начале и конце) === */
+.pagination-controls-top,
+.pagination-controls-bottom {
+  margin: 10px 0;
+  text-align: center;
+  padding: 12px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.page-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.page-btn:disabled {
+  background: rgba(0,0,0,0.3);
+  cursor: not-allowed;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #a01f1f;
+  transform: scale(1.05);
+}
+
+#page-info-top,
+#page-info-bottom {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* === Grid и остальное — без изменений === */
+.grid { width: 100%; margin-top: 20px; }
+.grid-sizer, .grid-item { width: var(--item-size); box-sizing: border-box; padding: 8px; }
+
+.grid-item {
+  position: relative;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px var(--shadow);
+}
+
+.grid-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  transition: opacity 0.25s;
+  display: block;
+  object-fit: contain;
+}
+
+.grid-item img:hover { opacity: 0.96; }
+
+/* === Сердечко для избранного === */
+.favorite-heart {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  transition: all 0.3s ease;
+  z-index: 10;
+  opacity: 0;
+  transform: scale(0.8);
+  box-shadow: 0 0 6px var(--shadow);
+}
+
+.grid-item:hover .favorite-heart {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* === Крест для удаления === */
+.delete-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.8);
+  box-shadow: 0 0 8px rgba(255,0,0,0.5);
+  z-index: 10;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 0, 0, 0.9);
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255,0,0,0.8);
+}
+
+.grid-item:hover .delete-btn { opacity: 1; }
+
+/* === Кнопка редактирования === */
+.rename-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  color: white;
+  border-radius: 4px;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transform: scale(1);
+  transform-origin: top right;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 10;
+  box-shadow: 0 0 6px var(--shadow);
+}
+
+.grid-item:hover .rename-btn { opacity: 1; }
+
+.img-overlay {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0,0,0,0.45);
+  padding: 6px 8px;
+  border-radius: 12px;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  color: #fdf5e6;
+  text-align: center;
+  font-size: 16px;
+  pointer-events: none;
+  display: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid-item:hover .img-overlay:not(:empty) { display: block; }
+
+.rename-input {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 10;
+  transform: scale(1);
+  transform-origin: bottom left;
+}
+
+.rename-input input {
+  flex: 1;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.2);
+  font-size: 14px;
+  font-family: 'Brush Script MT', cursive;
+}
+
+.rename-input button {
+  padding: 6px 8px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Brush Script MT', cursive;
+}
+
+/* === Номера картинок === */
+.grid-item .index-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  z-index: 10;
+  font-weight: bold;
+  transform: scale(1);
+  transform-origin: bottom left;
+}
+
+.modal .index-badge {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  z-index: 10;
+  font-weight: bold;
+}
+
+/* === Модалка с кнопкой выхода и стрелками === */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 98%;
+  max-height: 98%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+
+.close-btn:hover {
+  opacity: 1;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  background: rgba(0,0,0,0.3);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: translateY(-50%);
+  z-index: 100;
+}
+
+#prev-btn { left: 16px; }
+#next-btn { right: 16px; }
+
+.nav-btn:hover {
+  background: rgba(0,0,0,0.5);
+}
+
+.modal img {
+  max-width: 95%;
+  max-height: 95vh;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px var(--shadow);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.modal img.loaded {
+  transform: scale(1.02);
+}
+
+.modal-caption {
+  font-family: 'Georgia', serif;
+  font-size: 30px;
+  font-style: italic;
+  color: #fdf5e6;
+  text-align: center;
+  letter-spacing: 0.6px;
+  max-width: 95%;
+  word-break: break-word;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  padding: 8px 16px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  z-index: 101;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+#loading { color: var(--accent); font-style: italic; }
+
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 16px;
+  z-index: 9999;
+  display: none;
+  font-size: 14px;
+  font-family: 'Brush Script MT', cursive;
+}
+
+.toast.show { display: block; animation: toast-in 0.35s ease; }
+
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+#clipboard-warning {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 16px;
+  font-size: 16px;
+  z-index: 9999;
+  display: none;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  font-family: 'Brush Script MT', cursive;
+}
+
+/* === Padding для gallery-nav === */
+.gallery-nav {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.gallery-nav button {
+  padding: 10px 20px;
+  margin-bottom: 12px;
+  margin-left: 16px;
+  margin-right: 16px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.gallery-nav button:hover {
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.05);
+}
+
+.gallery-nav button.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* === Поиск, сортировка, режимы (для bookmarks) === */
+.search-bar {
+  margin: 15px 0;
+  padding: 10px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed rgba(255,255,255,0.2);
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 10px;
+  margin: 0;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Brush Script MT', cursive;
+}
+
+.sort-controls {
+  margin: 15px 0;
+  padding: 10px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed rgba(255,255,255,0.2);
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.sort-controls label {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--text);
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.sort-controls select {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.2);
+  background: var(--card-bg);
+  color: var(--text);
+  font-family: 'Brush Script MT', cursive;
+}
+
+.view-mode-controls {
+  margin: 15px 0;
+  padding: 10px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed rgba(255,255,255,0.2);
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.view-mode-controls label {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--text);
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.view-mode-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.view-mode-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-mode-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.view-mode-btn:hover:not(.active) {
+  background: rgba(255,255,255,0.1);
+}
+
+/* === Сетка карточек (для bookmarks) === */
+.bookmarks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--min-item-size), 1fr));
+  gap: 16px;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* === Карточки закладок === */
+.bookmark-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px var(--shadow);
+  transition: transform 0.3s ease;
+  margin-bottom: 16px;
+  position: relative;
+  cursor: pointer;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.bookmark-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px var(--shadow);
+}
+
+.bookmark-card:hover .card-footer .btn-delete { opacity: 1; }
+
+.card-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.site-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--accent);
+  margin: 0;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+
+.card-category {
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.7;
+  text-align: center;
+  width: 100%;
+  padding: 0 10px;
+  margin-top: 4px;
+}
+
+.card-footer {
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  position: relative;
+}
+
+.btn-delete {
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  transform: scale(0.8);
+  box-shadow: 0 0 8px rgba(255,0,0,0.5);
+  z-index: 10;
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 0, 0, 0.9);
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255,0,0,0.8);
+}
+
+/* === Режим списка === */
+.list-mode .bookmarks-grid {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: 1fr;
+}
+
+.list-mode .bookmark-card {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  flex-direction: row;
+  align-items: center;
+  padding: 6px;
+  min-height: 50px;
+}
+
+.list-mode .card-header {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 0;
+  width: 100%;
+}
+
+.list-mode .site-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.list-mode .card-title {
+  text-align: left;
+  font-size: 14px;
+}
+
+.list-mode .card-category {
+  text-align: left;
+  margin-top: 0;
+  font-size: 12px;
+}
+
+.list-mode .card-footer {
+  position: static;
+  padding: 0;
+  margin-left: auto;
+}
+
+.list-mode .btn-delete {
+  position: static;
+  opacity: 1;
+  margin-left: 12px;
+  transform: scale(1);
+  width: 24px;
+  height: 24px;
+}
+
+/* === Режим сетки === */
+.grid-mode .bookmarks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--min-item-size), 1fr));
+  gap: 16px;
+}
+
+.grid-mode .bookmark-card {
+  height: auto;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-mode .card-header {
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.grid-mode .card-title {
+  text-align: center;
+}
+
+.grid-mode .card-category {
+  text-align: center;
+}
+
+.grid-mode .card-footer {
+  position: relative;
+  padding: 12px 16px;
+}
+
+.grid-mode .btn-delete {
+  position: absolute;
+  opacity: 0;
+}
+
+/* === Footer === */
+.site-footer {
+  text-align: center;
+  padding: 30px 0;
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.6;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}

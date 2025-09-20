@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+npm-debug.log*
+*.log
+*.pid
+
+# VS Code
+.vscode/
+
+# Папки с данными (не включать в репозиторий)
+uploads/
+data/bookmarks.json
+data/categories.json
+galleries.json
+
+# Браузерные кэши и временные файлы
+.DS_Store
+Thumbs.db
+
+# Локальные конфиги
+.npmrc
+.env
+
+# Сборка
+dist/
+build/
+
+# Логи и временные файлы
+*.tmp
+*.temp
