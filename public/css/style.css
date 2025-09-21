@@ -19,27 +19,15 @@ body[data-theme="light"] {
   --shadow: rgba(0,0,0,0.1);
 }
 
-/* === Базовое тело === */
 body {
   font-family: 'Brush Script MT', cursive;
   margin: 0;
   background: var(--bg);
   color: var(--text);
   transition: background 0.4s, color 0.4s;
+  position: relative;
   padding: 0 20px;
   min-height: 100vh;
-}
-
-/* === Для страниц с прижатым футером (галерея, закладки) применяем flex-контейнер === */
-.page-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.page-content {
-  flex: 1;
-  padding: 20px 0;
 }
 
 /* === Верхняя панель === */
@@ -525,7 +513,6 @@ details button:hover {
   padding: 24px;
   overflow: hidden;
 }
-
 .modal-content {
   display: flex;
   flex-direction: column;
@@ -546,9 +533,9 @@ details button:hover {
   background: rgba(0,0,0,0.6);
   color: white;
   border: none;
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
+  width: 28px; /* Уменьшено на 30% */
+  height: 28px;
+  font-size: 18px;
   border-radius: 50%;
   cursor: pointer;
   opacity: 0.7;
@@ -989,12 +976,93 @@ details button:hover {
   opacity: 0;
 }
 
-/* === Footer === */
-.site-footer {
+/* === Модальное окно добавления закладки === */
+#add-bookmark-modal .modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 24px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px var(--shadow);
+  max-width: 500px;
+  margin: 40px auto;
+}
+
+#add-bookmark-modal .modal-content > .close-btn {
+  position: relative;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 12px;
+  margin: 0 0 16px auto;
+}
+
+#add-bookmark-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 0;
+}
+
+#add-bookmark-modal label {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--text);
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+#add-bookmark-modal input,
+#add-bookmark-modal select {
+  padding: 10px;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Brush Script MT', cursive;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#add-bookmark-modal button[type="submit"] {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+#add-bookmark-modal button[type="submit"]:hover {
+  background: #a01f1f;
+  transform: scale(1.05);
+}
+
+/* === Footer для bookmarks.html === */
+body[favorites-page] .page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body[favorites-page] .page-content {
+  flex: 1;
+}
+
+body[favorites-page] .site-footer {
   text-align: center;
   padding: 30px 0;
   font-size: 14px;
   color: var(--text);
   opacity: 0.6;
   border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: auto;
 }
