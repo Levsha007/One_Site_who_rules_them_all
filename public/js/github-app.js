@@ -1,5 +1,5 @@
 // public/js/github-app.js
-let currentProfile = 'Levsha007'; // ← замените!
+let currentProfile = 'Levsha007'; // ← замените на свой логин!
 const myUsername = 'Levsha007'; // Ваш фиксированный логин
 
 function escapeHtml(s) {
@@ -152,7 +152,10 @@ async function loadGitHubData(username = currentProfile) {
       followingRes.json()
     ]);
 
-    renderProfile(userData);
+    // Подсчитываем общее количество звёзд на всех ваших репозиториях
+    const totalStarsOnMyRepos = reposData.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
+
+    renderProfile(userData, starredData, totalStarsOnMyRepos);
     renderPublicRepos(reposData);
     renderStarredRepos(starredData);
     renderFollowing(followingData);
@@ -168,7 +171,7 @@ async function loadGitHubData(username = currentProfile) {
   }
 }
 
-function renderProfile(user) {
+function renderProfile(user, starredData, totalStarsOnMyRepos) {
   const container = document.getElementById('profile-section');
   container.innerHTML = `
     <div class="profile-card">
@@ -186,7 +189,11 @@ function renderProfile(user) {
         </div>
         <div class="stat-item">
           <div class="stat-label">Звёзды</div>
-          <div class="stat-value">${document.querySelectorAll('#starred-list .card').length}</div>
+          <div class="stat-value">${starredData.length}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">⭐ Мои звёзды</div>
+          <div class="stat-value">${totalStarsOnMyRepos}</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Фолловеры</div>
@@ -332,7 +339,7 @@ function searchUser() {
   input.value = ''; // очистить после поиска
 }
 
-// === КНОПКА "НАЗАД НА ГЛАВНУЮ" ===
+// Кнопка "Главная"
 document.getElementById('home-btn')?.addEventListener('click', () => {
   window.location.href = '/';
 });

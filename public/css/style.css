@@ -19,6 +19,19 @@ body[data-theme="light"] {
   --shadow: rgba(0,0,0,0.1);
 }
 
+/* === Общая структура страницы === */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
+  padding: 20px 0;
+}
+
+/* === Тело документа === */
 body {
   font-family: 'Brush Script MT', cursive;
   margin: 0;
@@ -28,6 +41,18 @@ body {
   position: relative;
   padding: 0 20px;
   min-height: 100vh;
+}
+
+/* === Footer — прижат к низу, центрирован === */
+.site-footer {
+  text-align: center;
+  padding: 30px 0;
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.6;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  width: 100%;
+  margin-top: auto;
 }
 
 /* === Верхняя панель === */
@@ -533,20 +558,148 @@ details button:hover {
   background: rgba(0,0,0,0.6);
   color: white;
   border: none;
-  width: 28px; /* Уменьшено на 30% */
-  height: 28px;
-  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
   border-radius: 50%;
   cursor: pointer;
   opacity: 0.7;
   transition: opacity 0.2s;
   z-index: 100;
+  margin-bottom: 45px;
 }
 
 .close-btn:hover {
   opacity: 1;
 }
 
+/* === Модальное окно добавления закладки === */
+#add-bookmark-modal .modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 24px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px var(--shadow);
+  max-width: 500px;
+  margin: 40px auto;
+}
+
+#add-bookmark-modal .modal-content > .close-btn {
+  position: relative;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 12px;
+  margin: 0 0 16px auto;
+}
+
+#add-bookmark-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 0;
+}
+
+#add-bookmark-modal label {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--text);
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+#add-bookmark-modal input,
+#add-bookmark-modal select {
+  padding: 10px;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Brush Script MT', cursive;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#add-bookmark-modal button[type="submit"] {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+#add-bookmark-modal button[type="submit"]:hover {
+  background: #a01f1f;
+  transform: scale(1.05);
+}
+
+/* === Просмотр закладки (модалка) === */
+#view-bookmark-modal .modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 24px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px var(--shadow);
+  max-width: 500px;
+  margin: 40px auto;
+}
+
+#view-bookmark-modal .modal-content > .close-btn {
+  position: relative;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 12px;
+  margin: 0 0 16px auto;
+}
+
+#bookmark-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+#bookmark-title-modal {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+#bookmark-url-modal {
+  font-size: 16px;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+#bookmark-url-modal:hover {
+  opacity: 0.9;
+}
+
+#bookmark-category-modal {
+  font-size: 14px;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+/* === Пагинация и другие элементы === */
 .nav-btn {
   position: absolute;
   top: 50%;
@@ -974,95 +1127,4 @@ details button:hover {
 .grid-mode .btn-delete {
   position: absolute;
   opacity: 0;
-}
-
-/* === Модальное окно добавления закладки === */
-#add-bookmark-modal .modal-content {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 16px;
-  padding: 24px;
-  background: var(--card-bg);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px var(--shadow);
-  max-width: 500px;
-  margin: 40px auto;
-}
-
-#add-bookmark-modal .modal-content > .close-btn {
-  position: relative;
-  top: 0;
-  right: 0;
-  width: 28px;
-  height: 28px;
-  font-size: 18px;
-  background: rgba(0,0,0,0.4);
-  border-radius: 12px;
-  margin: 0 0 16px auto;
-}
-
-#add-bookmark-modal form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 0;
-}
-
-#add-bookmark-modal label {
-  font-family: 'Playfair Display', serif;
-  font-size: 16px;
-  color: var(--text);
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-#add-bookmark-modal input,
-#add-bookmark-modal select {
-  padding: 10px;
-  border: 1px solid rgba(0,0,0,0.2);
-  border-radius: 12px;
-  font-size: 14px;
-  font-family: 'Brush Script MT', cursive;
-  background: var(--bg);
-  color: var(--text);
-}
-
-#add-bookmark-modal button[type="submit"] {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
-}
-
-#add-bookmark-modal button[type="submit"]:hover {
-  background: #a01f1f;
-  transform: scale(1.05);
-}
-
-/* === Footer для bookmarks.html === */
-body[favorites-page] .page-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-body[favorites-page] .page-content {
-  flex: 1;
-}
-
-body[favorites-page] .site-footer {
-  text-align: center;
-  padding: 30px 0;
-  font-size: 14px;
-  color: var(--text);
-  opacity: 0.6;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  margin-top: auto;
 }
