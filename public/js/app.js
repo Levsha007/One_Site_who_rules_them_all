@@ -301,6 +301,7 @@ if (document.getElementById('gallery-grid')) {
     loadGalleries('favorites');
   });
 
+  // ✅ Загрузка файлов + очистка списка
   document.getElementById('upload-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
@@ -310,7 +311,9 @@ if (document.getElementById('gallery-grid')) {
       const r = await res.json();
       if (r.success) {
         showToast(`Загружено ${r.images.length}`);
-        loadGalleries();
+        loadGalleries(); // Обновляем галерею
+        // ✅ Очищаем список файлов
+        e.target.reset();
       } else {
         showToast('Ошибка: ' + (r.error || 'неизвестно'));
       }
@@ -319,6 +322,35 @@ if (document.getElementById('gallery-grid')) {
       showToast('Ошибка сети при загрузке');
     }
     document.getElementById('loading').style.display = 'none';
+  });
+
+    // === Создание папки — остаёмся на /gallery ===
+  document.getElementById('create-gallery-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault(); // ✅ Ключевое: предотвращаем переход
+    const formData = new FormData(e.target);
+    const name = formData.get('name');
+    if (!name.trim()) {
+      showToast('Введите имя папки');
+      return;
+    }
+    try {
+      const res = await fetch('/create-gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim() })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast(`Папка "${data.name}" создана`);
+        e.target.reset();
+        loadGalleries(); // Обновляем список галерей
+      } else {
+        showToast('Ошибка: ' + (data.error || 'неизвестна'));
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Ошибка сети при создании папки');
+    }
   });
 
   document.addEventListener('click', async (e) => {

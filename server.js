@@ -46,10 +46,11 @@ if (!fs.existsSync(path.join(__dirname, 'public', 'uploads', 'temp'))) {
   fs.mkdirSync(path.join(__dirname, 'public', 'uploads', 'temp'), { recursive: true });
 }
 
+// ✅ Увеличено до 3000 файлов
 const upload = multer({
   storage,
   limits: {
-    files: 1000,
+    files: 3000,
     fileSize: 500 * 1024 * 1024,
     fieldSize: 500 * 1024 * 1024,
   },
@@ -89,19 +90,21 @@ app.get('/galleries', (req, res) => {
   res.json(galleries);
 });
 
+// server.js — фрагмент
 app.post('/create-gallery', (req, res) => {
   const { name } = req.body;
   const folderPath = path.join('public/uploads', name);
   if (galleries.some(g => g.name === name)) {
-    return res.status(400).send('Папка с таким именем уже существует');
+    return res.status(400).json({ error: 'Папка с таким именем уже существует' });
   }
   fs.mkdirSync(path.join(__dirname, folderPath), { recursive: true });
   galleries.push({ name, folderPath, images: [] });
   fs.writeFileSync(GALLERIES_FILE, JSON.stringify(galleries, null, 2));
-  res.redirect('/');
+  // ✅ Отправляем JSON, но не редиректим
+  res.json({ success: true, name });
 });
 
-app.post('/upload', upload.array('images', 1000), async (req, res) => {
+app.post('/upload', upload.array('images', 3000), async (req, res) => {
   const { gallery, url } = req.body;
   const files = req.files;
   const galleryIndex = galleries.findIndex(g => g.name === gallery);
