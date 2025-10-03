@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Параллакс-путь</title>
+
+  <!-- Иконка для вкладки -->
+  <link rel="icon" href="/assets/parallax-icon.png" type="image/png">
+
+  <!-- Подключаем шрифты из вашей папки fonts -->
+  <style>
+    @font-face {
+      font-family: 'raleway_f';
+      src: url('/fonts/raleway-regular.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'raleway_f';
+      src: url('/fonts/raleway-black.woff2') format('woff2');
+      font-weight: 900;
+      font-style: normal;
+    }
+  </style>
+
+  <!-- Ваши стили -->
+  <link rel="stylesheet" href="/css/parallax-style.css">
+
+  <!-- Локальные скрипты GSAP и ScrollSmoother -->
+  <script src="/libs/gsap/gsap.min.js" defer></script>
+  <script src="/libs/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/libs/gsap/ScrollSmoother.min.js" defer></script>
+
+  <!-- Ваш JS -->
+  <script src="/js/parallax-app.js" defer></script>
+</head>
+<body>
+
+  <!-- Верхняя панель с кнопкой назад -->
+  <div class="top-panel-parallax">
+    <button id="home-btn" class="home-btn">&larr; Главная</button>
+    <span class="current-gallery-title">Параллакс-путь</span>
+  </div>
+
+  <!-- Основной контент -->
+  <div class="wrapper">
+    <div class="content">
+
+      <header class="main-header">
+        <div class="layers">
+          <div class="layer__header">
+            <div class="layers__caption">Welcome to Parallax</div>
+            <div class="layers__title">Fairy Forest</div>
+          </div>
+          <div class="layer layers__base" style="background-image: url(/img/layer-base.png);"></div>
+          <div class="layer layers__middle" style="background-image: url(/img/layer-middle.png);"></div>
+          <div class="layer layers__front" style="background-image: url(/img/layer-front.png);"></div>
+        </div>
+      </header>
+    
+      <article class="main-article" style="background-image: url(/img/dungeon.jpg);">
+        <div class="main-article__content">
+          <h2 class="main-article__header">Секреты леса</h2>
+          <p class="main-article__paragraph">
+            Здесь, где деревья шепчут истории, а тени прячут древние тайны, каждый шаг — это новое открытие. 
+            Прокрутите вниз, чтобы увидеть, как мир оживает: ветер шелестит листвой, камни дышат, а звёзды начинают мерцать.
+          </p>
+          <p class="main-article__paragraph">
+            Этот путь не для спешащих. Он для тех, кто умеет слушать тишину и видеть то, что скрыто за поворотом. 
+            <a id="back-to-home-link" href="/" style="color: #c0392b; text-decoration: underline; font-weight: bold;">← Назад к началу</a>
+          </p>
+        </div>
+        <div class="copy">© 2025 Мой Мир. Все права защищены.</div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- Подключаем общие скрипты (только тема и кнопка) -->
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -197,6 +197,10 @@ app.get('/categories', (req, res) => {
   res.json(categories);
 });
 
+app.get('/parallax', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'parallax.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Сервер запущен: http://localhost:${PORT}`);
 });
