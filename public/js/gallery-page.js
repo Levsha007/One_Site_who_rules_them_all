@@ -34,6 +34,132 @@ const grid = document.getElementById('gallery-grid');
 let currentPage = 0;
 const itemsPerPage = 150;
 
+// ========== Новая часть: управление колонками/ползунком ==========
+const sliderContainer = document.querySelector('.slider-container');
+const sliderFill = document.querySelector('.slider-fill');
+const sliderThumb = document.querySelector('.slider-thumb');
+const sizeValue = document.getElementById('sizeValue');
+const decreaseBtn = document.getElementById('decrease-cols');
+const increaseBtn = document.getElementById('increase-cols');
+
+let numCols = 3; // По умолчанию
+const minCols = 1;
+const maxCols = 10;
+
+// Утилита: применить размеры колонок к DOM (grid-sizer и grid-item)
+function applyNumColsToGrid(cols) {
+  const gridEl = document.querySelector('.grid');
+  if (!gridEl) return;
+
+  // учтём gap (gutter)
+  const gap = 16; // px — совпадает с Masonry gutter
+  const gridWidth = gridEl.clientWidth || gridEl.getBoundingClientRect().width || 0;
+  // Если gridWidth слишком маленький (не отрисован) — отложим
+  if (!gridWidth) return;
+
+  const availableWidth = Math.max(0, gridWidth - gap * (cols - 1));
+  const colWidth = Math.floor(availableWidth / cols);
+
+  // Применяем ширины в px — Masonry настроен на columnWidth: '.grid-sizer'
+  document.querySelectorAll('.grid-sizer').forEach(el => {
+    el.style.width = `${colWidth}px`;
+  });
+  document.querySelectorAll('.grid-item').forEach(el => {
+    el.style.width = `${colWidth}px`;
+  });
+
+  // Обновляем визуальный ползунок
+  if (sliderFill && sliderThumb && sizeValue) {
+    const percent = ((cols - minCols) / (maxCols - minCols)) * 100;
+    sliderFill.style.width = `${percent}%`;
+    sliderThumb.style.left = `${percent}%`;
+    sizeValue.textContent = `${cols} кол.`;
+  }
+
+  // Сохраняем выбор
+  localStorage.setItem('tileScaleNumCols', String(cols));
+
+  // Если Masonry уже создан — перестраиваем в реальном времени
+  if (masonry) {
+    // небольшой таймаут гарантирует, что layout будет корректным после изменений размеров
+    setTimeout(() => masonry.layout(), 30);
+  }
+}
+
+// Обёртка, используемая при изменении (вызывается в drag/mousemove и кнопках)
+function updateSliderAndGrid() {
+  // Clamp
+  numCols = Math.max(minCols, Math.min(maxCols, Math.round(numCols)));
+  applyNumColsToGrid(numCols);
+}
+
+// При загрузке страницы — пытаемся восстановить сохранённое значение
+window.addEventListener('DOMContentLoaded', () => {
+  const savedNumCols = parseInt(localStorage.getItem('tileScaleNumCols'));
+  if (Number.isFinite(savedNumCols) && savedNumCols >= minCols && savedNumCols <= maxCols) {
+    numCols = savedNumCols;
+  } else {
+    numCols = 3;
+  }
+  // Если grid ещё не содержит элементов — applyNumColsToGrid не навредит (просто вернёт)
+  updateSliderAndGrid();
+
+  // Обработчик ресайза — пересчитать колонки (чтобы ширины в px оставались актуальны)
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      // пересчитать исходя из текущей ширины контейнера
+      applyNumColsToGrid(numCols);
+    }, 100);
+  });
+});
+
+// Слежение за кликом по контейнеру ползунка — вычисляем numCols и обновляем
+sliderContainer?.addEventListener('mousedown', (e) => {
+  const rect = sliderContainer.getBoundingClientRect();
+  const totalRange = maxCols - minCols + 1;
+  const stepWidth = rect.width / (totalRange - 1);
+
+  function setFromX(x) {
+    const offset = Math.max(0, Math.min(rect.width, x - rect.left));
+    const stepIndex = Math.round(offset / stepWidth);
+    numCols = minCols + stepIndex;
+    numCols = Math.max(minCols, Math.min(maxCols, numCols));
+    updateSliderAndGrid();
+  }
+
+  setFromX(e.clientX);
+
+  function move(ev) {
+    setFromX(ev.clientX);
+  }
+
+  function up() {
+    document.removeEventListener('mousemove', move);
+    document.removeEventListener('mouseup', up);
+  }
+
+  document.addEventListener('mousemove', move);
+  document.addEventListener('mouseup', up);
+});
+
+// кнопки уменьшения/увеличения колонок
+decreaseBtn?.addEventListener('click', () => {
+  if (numCols > minCols) {
+    numCols--;
+    updateSliderAndGrid();
+  }
+});
+increaseBtn?.addEventListener('click', () => {
+  if (numCols < maxCols) {
+    numCols++;
+    updateSliderAndGrid();
+  }
+});
+
+// ========== Конец новой части: управление колонками/ползунком ==========
+
 async function loadGalleries(filter = 'all') {
   try {
     const res = await fetch('/galleries');
@@ -42,23 +168,27 @@ async function loadGalleries(filter = 'all') {
 
     // select
     const select = document.querySelector('select[name="gallery"]');
-    select.innerHTML = '<option value="" disabled selected>Выберите папку</option>';
-    allGalleries.forEach(g => {
-      const opt = document.createElement('option');
-      opt.value = g.name;
-      opt.textContent = g.name;
-      select.appendChild(opt);
-    });
+    if (select) {
+      select.innerHTML = '<option value="" disabled selected>Выберите папку</option>';
+      allGalleries.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.name;
+        opt.textContent = g.name;
+        select.appendChild(opt);
+      });
+    }
 
     // nav
     const nav = document.getElementById('gallery-nav');
-    nav.innerHTML = '<button data-gallery="all">Все</button>';
-    allGalleries.forEach(g => {
-      const btn = document.createElement('button');
-      btn.dataset.gallery = g.name;
-      btn.textContent = g.name;
-      nav.appendChild(btn);
-    });
+    if (nav) {
+      nav.innerHTML = '<button data-gallery="all">Все</button>';
+      allGalleries.forEach(g => {
+        const btn = document.createElement('button');
+        btn.dataset.gallery = g.name;
+        btn.textContent = g.name;
+        nav.appendChild(btn);
+      });
+    }
 
     // очистка
     document.querySelectorAll('.grid-item:not(.grid-sizer)').forEach(el => el.remove());
@@ -123,20 +253,35 @@ async function loadGalleries(filter = 'all') {
       `;
       fragment.appendChild(item);
     });
+
+    // Добавляем элементы в grid
     grid.appendChild(fragment);
 
-    // Удаляем старый Masonry
-    if (masonry) masonry.destroy();
+    // Перед инициализацией Masonry — убедимся, что .grid-sizer и .grid-item имеют нужные ширины
+    // Если колонки не установлены (например первый раз) — применяем текущие numCols
+    applyNumColsToGrid(numCols);
 
+    // Удаляем старый Masonry и инициализируем заново
+    if (masonry) {
+      try { masonry.destroy(); } catch (e) { /* ignore */ }
+      masonry = null;
+    }
+
+    // Инициализируем Masonry (немного задерживаемся, чтобы браузер успел применить ширины)
     setTimeout(() => {
       masonry = new Masonry('.grid', {
         itemSelector: '.grid-item',
         columnWidth: '.grid-sizer',
-        percentPosition: true,
+        percentPosition: false,
         gutter: 16
       });
-    }, 220);
+      // сразу делаем layout — чтобы плитки встали на свои места
+      setTimeout(() => {
+        try { masonry.layout(); } catch (e) { /* ignore */ }
+      }, 40);
+    }, 60);
 
+    // lazy observer — если картинки лениво подгружаются
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -176,16 +321,22 @@ function updateCurrentGalleryTitle(name) {
 }
 
 function updatePaginationControls(totalItems) {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const currentPageNum = currentPage + 1;
 
-  document.getElementById('page-info-top').textContent = `Страница ${currentPageNum} из ${totalPages}`;
-  document.getElementById('prev-page-top').disabled = currentPage === 0;
-  document.getElementById('next-page-top').disabled = currentPage >= totalPages - 1;
+  const topInfo = document.getElementById('page-info-top');
+  if (topInfo) topInfo.textContent = `Страница ${currentPageNum} из ${totalPages}`;
+  const prevTop = document.getElementById('prev-page-top');
+  const nextTop = document.getElementById('next-page-top');
+  if (prevTop) prevTop.disabled = currentPage === 0;
+  if (nextTop) nextTop.disabled = currentPage >= totalPages - 1;
 
-  document.getElementById('page-info-bottom').textContent = `Страница ${currentPageNum} из ${totalPages}`;
-  document.getElementById('prev-page-bottom').disabled = currentPage === 0;
-  document.getElementById('next-page-bottom').disabled = currentPage >= totalPages - 1;
+  const bottomInfo = document.getElementById('page-info-bottom');
+  if (bottomInfo) bottomInfo.textContent = `Страница ${currentPageNum} из ${totalPages}`;
+  const prevBottom = document.getElementById('prev-page-bottom');
+  const nextBottom = document.getElementById('next-page-bottom');
+  if (prevBottom) prevBottom.disabled = currentPage === 0;
+  if (nextBottom) nextBottom.disabled = currentPage >= totalPages - 1;
 }
 
 document.getElementById('prev-page-top').addEventListener('click', () => {
@@ -259,15 +410,16 @@ document.getElementById('favorites-btn').addEventListener('click', () => {
 document.getElementById('upload-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const fd = new FormData(e.target);
-  document.getElementById('loading').style.display = 'inline';
+  const loadingEl = document.getElementById('loading');
+  if (loadingEl) loadingEl.style.display = 'inline';
   try {
     const res = await fetch('/upload', { method: 'POST', body: fd });
     const r = await res.json();
     if (r.success) {
       showToast(`Загружено ${r.images.length}`);
       const currentFilter = localStorage.getItem('currentGallery') || 'all';
-      loadGalleries(currentFilter); // Остаёмся в той же папке
-      e.target.reset(); // ✅ Очистка textarea и формы
+      loadGalleries(currentFilter);
+      e.target.reset(); // Очистка textarea
     } else {
       showToast('Ошибка: ' + (r.error || 'неизвестно'));
     }
@@ -275,14 +427,14 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     console.error(err);
     showToast('Ошибка сети при загрузке');
   }
-  document.getElementById('loading').style.display = 'none';
+  if (loadingEl) loadingEl.style.display = 'none';
 });
 
 document.getElementById('create-gallery-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
   const name = formData.get('name');
-  if (!name.trim()) {
+  if (!name || !String(name).trim()) {
     showToast('Введите имя папки');
     return;
   }
@@ -290,7 +442,7 @@ document.getElementById('create-gallery-form')?.addEventListener('submit', async
     const res = await fetch('/create-gallery', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name.trim() })
+      body: JSON.stringify({ name: String(name).trim() })
     });
     const data = await res.json();
     if (res.ok && data.success) {
@@ -437,8 +589,10 @@ function applyNameToElement(imgEl, newName) {
   const modalImg = document.getElementById('modal-img');
   if (modalImg && modalImg.src === imgEl.src) {
     const cap = document.getElementById('modal-caption');
-    cap.textContent = newName;
-    cap.style.fontSize = '30px';
+    if (cap) {
+      cap.textContent = newName;
+      cap.style.fontSize = '30px';
+    }
   }
 }
 
@@ -491,7 +645,6 @@ function closeModal() {
   currentImageIndex = -1;
 }
 
-// === Открытие модального окна по клику ===
 document.addEventListener('click', e => {
   const img = e.target.closest('.grid-item img');
   if (img) {
@@ -626,61 +779,6 @@ modal?.addEventListener('touchend', e => {
   }
 }, { passive: true });
 
-// === Ползунок размера плиток ===
-const sliderContainer = document.querySelector('.slider-container');
-const sliderFill = document.querySelector('.slider-fill');
-const sliderThumb = document.querySelector('.slider-thumb');
-const sizeValue = document.getElementById('sizeValue');
-const savedPercent = (() => {
-  const v = localStorage.getItem('tileScalePercent');
-  const n = Number(v);
-  return (Number.isFinite(n) && n >= 10 && n <= 100) ? n : 100;
-})();
-updateSlider(savedPercent);
-
-sliderContainer?.addEventListener('mousedown', (e) => {
-  const rect = sliderContainer.getBoundingClientRect();
-  const percent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-  updateSlider(percent);
-});
-
-sliderThumb?.addEventListener('mousedown', (e) => {
-  e.preventDefault();
-  const startX = e.clientX;
-  const startPercent = parseFloat(sliderFill.style.width) || 0;
-  const move = (e) => {
-    const dx = e.clientX - startX;
-    const rect = sliderContainer.getBoundingClientRect();
-    const newPercent = Math.max(0, Math.min(100, (startPercent / 100) * 100 + (dx / rect.width) * 100));
-    updateSlider(newPercent);
-  };
-  const up = () => {
-    document.removeEventListener('mousemove', move);
-    document.removeEventListener('mouseup', up);
-  };
-  document.addEventListener('mousemove', move);
-  document.addEventListener('mouseup', up);
-});
-
-function updateSlider(percent) {
-  const rounded = Math.round(percent);
-  sliderFill.style.width = rounded + '%';
-  sliderThumb.style.left = rounded + '%';
-  sizeValue.textContent = rounded + '%';
-  localStorage.setItem('tileScalePercent', String(rounded));
-  applyScale(rounded);
-}
-
-function applyScale(percent) {
-  const newWidth = (32.7 * percent / 100);
-  document.documentElement.style.setProperty('--item-size', newWidth.toFixed(3) + '%');
-  const scale = (percent / 100);
-  document.documentElement.style.setProperty('--scale-factor', String(scale));
-  if (masonry) {
-    setTimeout(() => masonry.layout(), 220);
-  }
-}
-
 // === Восстановление состояния ===
 window.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -696,17 +794,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const createOpen = localStorage.getItem('createDetailsOpen') === 'true';
   const uploadOpen = localStorage.getItem('uploadDetailsOpen') === 'true';
   const galleriesOpen = localStorage.getItem('galleriesDetailsOpen') === 'true';
-  createDetails.open = createOpen;
-  uploadDetails.open = uploadOpen;
-  galleriesDetails.open = galleriesOpen;
+  if (createDetails) createDetails.open = createOpen;
+  if (uploadDetails) uploadDetails.open = uploadOpen;
+  if (galleriesDetails) galleriesDetails.open = galleriesOpen;
 
-  createDetails.addEventListener('toggle', () => {
+  createDetails?.addEventListener('toggle', () => {
     localStorage.setItem('createDetailsOpen', String(createDetails.open));
   });
-  uploadDetails.addEventListener('toggle', () => {
+  uploadDetails?.addEventListener('toggle', () => {
     localStorage.setItem('uploadDetailsOpen', String(uploadDetails.open));
   });
-  galleriesDetails.addEventListener('toggle', () => {
+  galleriesDetails?.addEventListener('toggle', () => {
     localStorage.setItem('galleriesDetailsOpen', String(galleriesDetails.open));
   });
 
@@ -742,7 +840,8 @@ document.addEventListener('paste', async (e) => {
         formData.append('images', file);
 
         e.preventDefault();
-        document.getElementById('loading').style.display = 'inline';
+        const loadingEl = document.getElementById('loading');
+        if (loadingEl) loadingEl.style.display = 'inline';
         try {
           const res = await fetch('/upload', { method: 'POST', body: formData });
           const r = await res.json();
@@ -750,7 +849,7 @@ document.addEventListener('paste', async (e) => {
             showToast(`✅ Загружено ${r.images.length} изображений`);
             const currentFilter = localStorage.getItem('currentGallery') || 'all';
             loadGalleries(currentFilter);
-            document.getElementById('upload-form').reset(); // ✅ Очистка
+            document.getElementById('upload-form').reset();
           } else {
             showToast('❌ Ошибка: ' + (r.error || 'неизвестно'));
           }
@@ -758,7 +857,7 @@ document.addEventListener('paste', async (e) => {
           console.error(err);
           showToast('❌ Ошибка сети при загрузке');
         }
-        document.getElementById('loading').style.display = 'none';
+        if (loadingEl) loadingEl.style.display = 'none';
         break;
       }
     }
