@@ -46,7 +46,6 @@ if (!fs.existsSync(path.join(__dirname, 'public', 'uploads', 'temp'))) {
   fs.mkdirSync(path.join(__dirname, 'public', 'uploads', 'temp'), { recursive: true });
 }
 
-// ✅ Увеличено до 3000 файлов
 const upload = multer({
   storage,
   limits: {
@@ -85,12 +84,15 @@ app.get('/github', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'github.html'));
 });
 
+app.get('/parallax', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'parallax.html'));
+});
+
 // API
 app.get('/galleries', (req, res) => {
   res.json(galleries);
 });
 
-// server.js — фрагмент
 app.post('/create-gallery', (req, res) => {
   const { name } = req.body;
   const folderPath = path.join('public/uploads', name);
@@ -100,40 +102,62 @@ app.post('/create-gallery', (req, res) => {
   fs.mkdirSync(path.join(__dirname, folderPath), { recursive: true });
   galleries.push({ name, folderPath, images: [] });
   fs.writeFileSync(GALLERIES_FILE, JSON.stringify(galleries, null, 2));
-  // ✅ Отправляем JSON, но не редиректим
   res.json({ success: true, name });
 });
 
 app.post('/upload', upload.array('images', 3000), async (req, res) => {
-  const { gallery, url } = req.body;
-  const files = req.files;
+  const { gallery, urls } = req.body;
+  const files = req.files || [];
   const galleryIndex = galleries.findIndex(g => g.name === gallery);
   if (galleryIndex === -1) {
     return res.status(404).json({ success: false, error: 'Папка не найдена' });
   }
+
   const newImages = [];
-  if (url && url.trim()) {
-    const cleanUrl = url.trim();
-    try {
-      new URL(cleanUrl);
-      newImages.push({
-        path: cleanUrl,
-        name: `Ссылка: ${cleanUrl.substring(0, 30)}...`,
-        isExternal: true,
-        width: 300,
-        height: 300
-      });
-    } catch (e) {
-      return res.status(400).json({ success: false, error: 'Неверный URL' });
+
+  // Обработка нескольких ссылок
+  if (urls && urls.trim()) {
+    const urlList = urls.split('\n')
+      .map(url => url.trim())
+      .filter(url => url.length > 0);
+
+    for (const url of urlList) {
+      try {
+        new URL(url);
+        newImages.push({
+          path: url,
+          name: '',
+          isExternal: true,
+          width: 300,
+          height: 300
+        });
+      } catch (e) {
+        console.warn('Неверный URL:', url);
+      }
     }
   }
+
+  // Обработка файлов с уникальными именами
   for (const file of files) {
-    const targetPath = path.join(__dirname, 'public', 'uploads', gallery, file.originalname);
+    const originalName = file.originalname;
+    const ext = path.extname(originalName);
+    const baseName = path.basename(originalName, ext);
+
+    let finalName = originalName;
+    let counter = 1;
+    let targetPath = path.join(__dirname, 'public', 'uploads', gallery, finalName);
+
+    while (fs.existsSync(targetPath)) {
+      finalName = `${baseName}-${counter}${ext}`;
+      targetPath = path.join(__dirname, 'public', 'uploads', gallery, finalName);
+      counter++;
+    }
+
     fs.renameSync(file.path, targetPath);
     try {
       const metadata = await sharp(targetPath).metadata();
       newImages.push({
-        path: `/uploads/${gallery}/${file.originalname}`,
+        path: `/uploads/${gallery}/${finalName}`,
         width: metadata.width,
         height: metadata.height
       });
@@ -141,8 +165,10 @@ app.post('/upload', upload.array('images', 3000), async (req, res) => {
       console.error('Ошибка чтения метаданных:', err);
     }
   }
+
   galleries[galleryIndex].images.unshift(...newImages);
   fs.writeFileSync(GALLERIES_FILE, JSON.stringify(galleries, null, 2));
+
   res.json({ success: true, images: newImages });
 });
 
@@ -195,10 +221,6 @@ app.delete('/bookmarks/:id', (req, res) => {
 
 app.get('/categories', (req, res) => {
   res.json(categories);
-});
-
-app.get('/parallax', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'parallax.html'));
 });
 
 app.listen(PORT, () => {

@@ -1,6 +1,6 @@
-// public/js/gallery-page.js — только галерея
+// public/js/gallery-page.js
+
 if (!document.getElementById('gallery-grid')) {
-  // Не на странице галереи → выходим
   console.log('[Gallery] Страница не загружена.');
   exit;
 }
@@ -265,7 +265,9 @@ document.getElementById('upload-form').addEventListener('submit', async (e) => {
     const r = await res.json();
     if (r.success) {
       showToast(`Загружено ${r.images.length}`);
-      loadGalleries();
+      const currentFilter = localStorage.getItem('currentGallery') || 'all';
+      loadGalleries(currentFilter); // Остаёмся в той же папке
+      e.target.reset(); // ✅ Очистка textarea и формы
     } else {
       showToast('Ошибка: ' + (r.error || 'неизвестно'));
     }
@@ -489,6 +491,7 @@ function closeModal() {
   currentImageIndex = -1;
 }
 
+// === Открытие модального окна по клику ===
 document.addEventListener('click', e => {
   const img = e.target.closest('.grid-item img');
   if (img) {
@@ -503,6 +506,44 @@ document.addEventListener('click', e => {
   }
 });
 
+// === Long Press (удержание) для перехода в папку ===
+let pressTimer = null;
+let startX, startY;
+
+document.addEventListener('mousedown', (e) => {
+  const img = e.target.closest('.grid-item img');
+  if (!img) return;
+
+  startX = e.clientX;
+  startY = e.clientY;
+
+  pressTimer = setTimeout(() => {
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    // Если мышь почти не двигалась — считаем это долгим нажатием
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+      const gallery = img.dataset.gallery;
+      if (gallery) {
+        localStorage.setItem('currentGallery', gallery);
+        currentPage = 0;
+        loadGalleries(gallery);
+        showToast(`Переход в папку: ${gallery}`);
+      }
+    }
+  }, 500); // 500 мс — порог удержания
+});
+
+document.addEventListener('mouseup', () => {
+  clearTimeout(pressTimer);
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (pressTimer && (Math.abs(e.clientX - startX) > 10 || Math.abs(e.clientY - startY) > 10)) {
+    clearTimeout(pressTimer);
+  }
+});
+
+// === Клавиши управления ===
 document.addEventListener('keydown', e => {
   if (currentImageIndex === -1) return;
   if (e.key === 'ArrowLeft') {
@@ -679,4 +720,47 @@ window.addEventListener('popstate', () => {
   const page = parseInt(urlParams.get('page') || '0');
   currentPage = isNaN(page) ? 0 : page;
   loadGalleries(gallery);
+});
+
+// ✅ Глобальная вставка из буфера
+document.addEventListener('paste', async (e) => {
+  const items = e.clipboardData.items;
+  const select = document.querySelector('select[name="gallery"]');
+  const galleryValue = select?.value;
+
+  if (!galleryValue) {
+    showToast('❌ Сначала выберите папку для загрузки');
+    return;
+  }
+
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) {
+        const formData = new FormData();
+        formData.append('gallery', galleryValue);
+        formData.append('images', file);
+
+        e.preventDefault();
+        document.getElementById('loading').style.display = 'inline';
+        try {
+          const res = await fetch('/upload', { method: 'POST', body: formData });
+          const r = await res.json();
+          if (r.success) {
+            showToast(`✅ Загружено ${r.images.length} изображений`);
+            const currentFilter = localStorage.getItem('currentGallery') || 'all';
+            loadGalleries(currentFilter);
+            document.getElementById('upload-form').reset(); // ✅ Очистка
+          } else {
+            showToast('❌ Ошибка: ' + (r.error || 'неизвестно'));
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('❌ Ошибка сети при загрузке');
+        }
+        document.getElementById('loading').style.display = 'none';
+        break;
+      }
+    }
+  }
 });

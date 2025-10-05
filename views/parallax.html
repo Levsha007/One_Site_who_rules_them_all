@@ -4,29 +4,26 @@
   <meta charset="UTF-8" />
   <title>Параллакс-путь</title>
 
-  <!-- Иконка для вкладки -->
+  <!-- Иконка -->
   <link rel="icon" href="/assets/parallax-icon.png" type="image/png">
 
-  <!-- Подключаем шрифты из вашей папки fonts -->
+  <!-- Шрифты -->
   <style>
     @font-face {
       font-family: 'raleway_f';
       src: url('/fonts/raleway-regular.woff2') format('woff2');
-      font-weight: normal;
-      font-style: normal;
     }
     @font-face {
       font-family: 'raleway_f';
       src: url('/fonts/raleway-black.woff2') format('woff2');
       font-weight: 900;
-      font-style: normal;
     }
   </style>
 
-  <!-- Ваши стили -->
+  <!-- Стили -->
   <link rel="stylesheet" href="/css/parallax-style.css">
 
-  <!-- Локальные скрипты GSAP и ScrollSmoother -->
+  <!-- Локальные библиотеки GSAP -->
   <script src="/libs/gsap/gsap.min.js" defer></script>
   <script src="/libs/gsap/ScrollTrigger.min.js" defer></script>
   <script src="/libs/gsap/ScrollSmoother.min.js" defer></script>
@@ -35,12 +32,6 @@
   <script src="/js/parallax-app.js" defer></script>
 </head>
 <body>
-
-  <!-- Верхняя панель с кнопкой назад -->
-  <div class="top-panel-parallax">
-    <button id="home-btn" class="home-btn">&larr; Главная</button>
-    <span class="current-gallery-title">Параллакс-путь</span>
-  </div>
 
   <!-- Основной контент -->
   <div class="wrapper">
@@ -62,12 +53,12 @@
         <div class="main-article__content">
           <h2 class="main-article__header">Секреты леса</h2>
           <p class="main-article__paragraph">
-            Здесь, где деревья шепчут истории, а тени прячут древние тайны, каждый шаг — это новое открытие. 
+            Здесь, где деревья шепчут истории, а тени прячут древние тайны, каждый шаг — это новое открытие.
             Прокрутите вниз, чтобы увидеть, как мир оживает: ветер шелестит листвой, камни дышат, а звёзды начинают мерцать.
           </p>
           <p class="main-article__paragraph">
-            Этот путь не для спешащих. Он для тех, кто умеет слушать тишину и видеть то, что скрыто за поворотом. 
-            <a id="back-to-home-link" href="/" style="color: #c0392b; text-decoration: underline; font-weight: bold;">← Назад к началу</a>
+            Этот путь не для спешащих. Он для тех, кто умеет слушать тишину и видеть то, что скрыто за поворотом.
+            <a href="/" style="color: #c0392b; text-decoration: underline;">← Назад к началу</a>
           </p>
         </div>
         <div class="copy">© 2025 Мой Мир. Все права защищены.</div>
@@ -76,7 +67,7 @@
     </div>
   </div>
 
-  <!-- Подключаем общие скрипты (только тема и кнопка) -->
+  <!-- Общий app.js (тема, кнопка) -->
   <script src="/js/app.js"></script>
 </body>
 </html>
